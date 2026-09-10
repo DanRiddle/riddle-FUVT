@@ -1,0 +1,5 @@
+pywebview>=5.4,<7
+
+# Optional. Only needed to open .7z downloads; without it, .7z archives are
+# reported as unsupported and the rest of the batch continues.
+# py7zr>=0.20

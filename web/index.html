@@ -1,0 +1,1042 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Riddle-FUVT</title>
+<style>
+:root{
+  --gold:#D8B478;
+  --gold-bright:#F0CC84;
+  --bronze:#A67C44;
+  --text:#EFEFF2;
+  --text-muted:#9C9CA6;
+
+  --glass:rgba(255,255,255,.045);
+  --glass-strong:rgba(255,255,255,.075);
+  --glass-line:rgba(255,255,255,.10);
+  --glass-edge:rgba(255,255,255,.22);
+  --gold-glass:rgba(216,180,120,.13);
+  --gold-line:rgba(216,180,120,.30);
+
+  --r-lg:16px; --r-md:11px; --r-sm:8px;
+  --row-h:46px;
+
+  --blur:none;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; color:var(--text); overflow:hidden;
+  background:#07070A;
+  font:14px/1.45 "Segoe UI Variable Text","Segoe UI",Inter,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.13);border-radius:99px;border:3px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:rgba(216,180,120,.35);background-clip:content-box}
+
+.ambient{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.ambient::after{
+  content:"";position:absolute;inset:0;
+  background:
+    radial-gradient(680px 420px at 8% -6%,  rgba(216,180,120,.20), transparent 62%),
+    radial-gradient(720px 520px at 96% 8%,  rgba(120,96,180,.16),  transparent 60%),
+    radial-gradient(900px 600px at 62% 108%,rgba(166,124,68,.18),  transparent 62%),
+    linear-gradient(160deg,#0B0B11 0%,#08080C 45%,#0A0A0E 100%);
+}
+.grain{
+  position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.5;
+  background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAE/ElEQVR42rWbzXLcMAyDecIB7/++bg9NJ7sRiY/a9uBJJhNbFsUfAKTreZ76c/n3pT/X19/09tPf/u/9vu/3+HDv1/9WuHRY7/337vLbTzXr/t3H+wumTXYPVLOIwEueNueFwbr1ybu6s7LAQ07GU7PpGjadTtbDWrW4TgZWchPysO+nbeiaFTav4AkaQksLY/p0c2fxLq40vLyG8DA00umZ29Nu159Oekp8ydIKm3MwWvf8LvkmD2jfNcW3Bne8iV8BD7pJrHTjP/bavbSgu00ZViA5ejDKuzdMBvPh3gre9NcAHqxNEpYPLuyNGzabORmgK5cpVLp3EE1uuqwEal5aIUnRZJbCMxp8ijvDuEynWMNJdqgv5RPBOFdCm6n+q1nYIGQU4KkGQxt6w1Q9kIFrCV9pOFST1Gj4nOJfICw1nLY6HHCCw5P7JDfVsGGBcKltHC+Jlk8e0JUcgsN1gdsT4+xwiRtvIYhSHRtMLptYmkI80xJF6/2UpwjFfnlWDbHpQwLs+LmbF3fQGwqCJkNMscYI9LS8jDXDxDShuVPp0zI3OYVqqrNu3F1BhBBw2xPkNRBDBIUPhD5rUIMIpBUAGwqnqEXsUklMIO/oKwQUMuak/QnS3QShJ3LjBRRPyNBTGaz/eJGT04I7JPiMBZdqamsteHsNp+VFLPuQX3yR7ZMS/KMM0s0UpMck8+sfhAj5//fD/RGqXZLo6KUoxgbgyEDPL+DqBPp2Hq6U+HSB1ioQmlMMOxizQ38JF0SYPqE+XSzgEDKpXmvJMGtBuI7PnZSbSXHdIkOC3/0BYfKFGPIiiBiQig1COynKBJxQ/EB6GZMuqFMVMOQDE7CgJMUQylKjaPAuDyXX/xLMaJDTPYRacnvaCzBorBxlcV0IozflyUOry4FGbyB6AnE+tccV2JYhcUkx7QsqayjTbWjySxJU6LXVZYLSIJ5stb/klVSj+JGcU63WoOaklrcXzVPiCQpASKF/4E4SKzASk1AXFUpT7NOc5NCBJn1Npfb4NiS2GdiLnODl7/RwaiM53fbtCkjZXcxv5C6HkDkagTIuL1pem4GJ5BWbXuSmifpSBYj7ecDTyXB0fqeCFnl7aah0pnJVQnLq+PYw9FABvtK2nQGZanPKTQ8uAR3C9IjGoMsJthVgSje5OcVNpteA2SdsQWaIauEJRwK2WUAL5kjAzEbO8oLrE53TxAO0ZHAKNVcB6Hgog101EhyXbY1yA4Cm8kTnizbs0sMIX/KsOI3yKbrysxMoTNAZ0BMJ2HGQ41/a4xuaKdAnVGiGTkmPehbBEafY91QFvMyydJCSZuxN78Cg/R3z1Sf1PhnOy3qtYRRXDd32MEgpoAtWgVEXA2KzGlAOH2fU87kch5Mlxe4eYlkX7tzlg80s4Q0SbKEwnf8nM3+p0UGnum8qkMGUu+io7OY0bwcpBdfVMqeIokPyYUQ9u37AVH8p1SYMb5LNSftcJxxgOKjkh80P3H7klPoSenaKdUSCajrEdBCaymiCM//0E53tF2ptGUyuKXD6BlSYjrclCEzK5dW0+A3VTO7ZzR57gK634GkjlP74YiR9FrPR7jqxY8sM9XABdasUtSEgKCqm2aDNd0ECWN8P0xtSdar3+QBBi5Mp0M3nt58ov5NGkHKZJklsI3U5QFxd5JebEZ3b8R11SFDDcDQdht5kcl2gu1okwnFG8RcOTgM79XZQCAAAAABJRU5ErkJggg==);
+  background-repeat:repeat;
+}
+
+.glass{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.060),rgba(255,255,255,.018) 42%,rgba(255,255,255,.030)),
+    rgba(13,13,19,.44);
+  backdrop-filter:var(--blur);
+  -webkit-backdrop-filter:var(--blur);
+  border:1px solid var(--glass-line);
+  border-radius:var(--r-lg);
+  box-shadow:0 1px 0 var(--glass-edge) inset, 0 18px 40px rgba(0,0,0,.45);
+}
+
+.app{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;padding:14px;gap:12px}
+
+.topbar{display:flex;align-items:center;gap:14px;padding:12px 18px;flex:0 0 auto}
+.logo{width:42px;height:42px;object-fit:contain;filter:drop-shadow(0 3px 10px rgba(216,180,120,.35))}
+.brand strong{display:block;font-size:17px;letter-spacing:.3px}
+.brand span{font-size:11.5px;color:var(--text-muted);letter-spacing:.2px}
+.spacer{flex:1}
+.tabs{display:flex;gap:4px;padding:4px;border-radius:99px;background:rgba(0,0,0,.28);border:1px solid var(--glass-line)}
+.tab{padding:7px 16px;border-radius:99px;font-size:13px;color:var(--text-muted);transition:.16s}
+.tab:hover{color:var(--text)}
+.tab.on{background:var(--gold-glass);border:1px solid var(--gold-line);color:var(--gold-bright);box-shadow:0 1px 0 rgba(255,255,255,.18) inset}
+.credit{text-align:right;font-size:11px;color:var(--text-muted);line-height:1.35}
+.credit a{color:var(--gold);text-decoration:none}
+.credit a:hover{text-decoration:underline}
+
+.main{flex:1;min-height:0;display:grid;grid-template-columns:326px 1fr;gap:12px}
+.sidebar{padding:18px;overflow:auto;display:flex;flex-direction:column;gap:16px}
+.panel{min-width:0;display:flex;flex-direction:column;overflow:hidden}
+.view{display:none;flex-direction:column;min-height:0}
+.view.on{display:flex;flex:1;min-height:0}
+.side{display:none}
+.side.on{display:flex;flex-direction:column;gap:16px}
+
+.label{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-muted);margin:0 0 9px}
+.pathbox{
+  background:rgba(0,0,0,.26);border:1px solid var(--glass-line);border-radius:var(--r-md);
+  padding:11px 12px;min-height:50px;word-break:break-all;color:#C6C6CE;font-size:12.5px
+}
+
+.btn{
+  width:100%;padding:11px 14px;border-radius:var(--r-md);
+  background:var(--glass-strong);border:1px solid var(--glass-line);
+  transition:.16s;text-align:center
+}
+.btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.20)}
+.btn:active{transform:translateY(1px)}
+.btn.gold{
+  background:linear-gradient(180deg,rgba(240,204,132,.92),rgba(190,150,92,.82));
+  border:1px solid rgba(255,225,170,.5);color:#171208;font-weight:650;
+  box-shadow:0 1px 0 rgba(255,255,255,.45) inset,0 8px 22px rgba(216,180,120,.22)
+}
+.btn.gold:hover{filter:brightness(1.07)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.row2{display:flex;gap:8px}
+.row2 .btn{flex:1}
+
+.field{
+  width:100%;padding:10px 12px;border-radius:var(--r-md);
+  background:rgba(0,0,0,.30);border:1px solid var(--glass-line);outline:none;transition:.16s
+}
+.field:focus{border-color:var(--gold-line);box-shadow:0 0 0 3px rgba(216,180,120,.10)}
+.field::placeholder{color:#6E6E78}
+select.field{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--text-muted) 50%),linear-gradient(135deg,var(--text-muted) 50%,transparent 50%);background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:32px}
+.inline{display:flex;gap:8px;align-items:center}
+.inline .field{flex:1}
+
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{background:var(--glass);border:1px solid var(--glass-line);border-radius:var(--r-md);padding:11px 12px;box-shadow:0 1px 0 rgba(255,255,255,.10) inset}
+.stat b{display:block;font-size:21px;color:var(--gold-bright);font-variant-numeric:tabular-nums;line-height:1.2}
+.stat span{font-size:10.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.7px}
+
+.note{
+  padding:13px;border-radius:var(--r-md);font-size:12px;color:var(--text-muted);line-height:1.55;
+  background:var(--gold-glass);border:1px solid rgba(216,180,120,.18)
+}
+.note b{color:var(--gold-bright);font-weight:600}
+.opt{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r-sm);font-size:12.5px;cursor:pointer;transition:.14s}
+.opt:hover{background:rgba(255,255,255,.05)}
+.opt+.opt{margin-top:2px}
+.opt input{accent-color:var(--gold);width:15px;height:15px;flex:0 0 auto}
+.note code{background:rgba(0,0,0,.3);padding:1px 5px;border-radius:4px;font-family:Consolas,monospace;font-size:11.5px;color:var(--gold)}
+
+.toolbar{display:flex;gap:9px;align-items:center;padding:13px 15px;border-bottom:1px solid var(--glass-line);flex:0 0 auto}
+.toolbar .field{width:auto}
+#search{flex:1}
+
+.thead,.trow{
+  display:grid;
+  grid-template-columns:minmax(150px,1.1fr) minmax(150px,1.3fr) 120px 116px 110px 96px minmax(120px,1fr);
+  align-items:center;gap:0
+}
+.thead{
+  flex:0 0 auto;padding:0 15px;background:rgba(0,0,0,.30);
+  border-bottom:1px solid var(--glass-line)
+}
+.thead div{
+  padding:10px 8px;font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;
+  color:var(--text-muted);cursor:pointer;user-select:none;white-space:nowrap
+}
+.thead div:hover{color:var(--gold)}
+.thead div.sorted{color:var(--gold-bright)}
+.scroller{flex:1;min-height:0;overflow:auto;padding:0 15px;position:relative;contain:layout paint}
+.trow{
+  height:var(--row-h);padding:0;border-bottom:1px solid rgba(255,255,255,.05);
+  font-size:13px;transition:background .12s
+}
+.trow:hover{background:rgba(255,255,255,.05)}
+.trow>div{padding:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.code{font-family:Consolas,"JetBrains Mono",monospace;color:var(--gold-bright);cursor:pointer}
+.code:hover{text-decoration:underline}
+.muted{color:var(--text-muted)}
+.chip{
+  display:inline-block;padding:3px 9px;border-radius:99px;font-size:11px;
+  background:var(--gold-glass);border:1px solid rgba(216,180,120,.22);color:var(--gold)
+}
+.priceInput{
+  width:88px;padding:5px 8px;border-radius:var(--r-sm);
+  background:rgba(0,0,0,.32);border:1px solid var(--glass-line);
+  font-family:Consolas,monospace;font-size:12.5px;outline:none
+}
+.priceInput:focus{border-color:var(--gold-line)}
+
+.empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--text-muted);padding:40px}
+.logwrap .empty{position:static;min-height:340px}
+.empty img{width:56px;height:56px;opacity:.5;margin-bottom:14px}
+.empty h3{margin:0 0 6px;color:var(--text);font-size:15px;font-weight:600}
+.empty p{margin:0;font-size:13px;max-width:380px}
+
+.progress{height:3px;background:rgba(255,255,255,.07);overflow:hidden;flex:0 0 auto}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--bronze),var(--gold-bright));transition:width .18s}
+
+.footer{
+  display:flex;align-items:center;gap:12px;padding:10px 15px;flex:0 0 auto;
+  border-top:1px solid var(--glass-line);font-size:12px;color:var(--text-muted)
+}
+.footer .status{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:99px;background:#5A5A66;flex:0 0 auto}
+.dot.ok{background:#6FCF97;box-shadow:0 0 8px rgba(111,207,151,.6)}
+.dot.warn{background:var(--gold);box-shadow:0 0 8px rgba(216,180,120,.6)}
+
+.logwrap{flex:1;min-height:0;overflow:auto;padding:15px;font-family:Consolas,monospace;font-size:12.5px;line-height:1.7}
+.logline{display:flex;gap:10px;padding:5px 9px;border-radius:var(--r-sm);border:1px solid transparent}
+.logline+.logline{margin-top:3px}
+.logline.ok{background:rgba(111,207,151,.06);border-color:rgba(111,207,151,.16)}
+.logline.bad{background:rgba(224,110,110,.07);border-color:rgba(224,110,110,.18)}
+.logline.warn{background:rgba(216,180,120,.06);border-color:rgba(216,180,120,.16);padding-left:26px}
+.logline .k{color:var(--gold);flex:0 0 auto}
+.logline .v{color:var(--text-muted);overflow:hidden;text-overflow:ellipsis}
+
+.toast{
+  position:fixed;right:24px;bottom:24px;z-index:50;max-width:440px;
+  padding:13px 16px;border-radius:var(--r-md);font-size:13px;
+  background:rgba(23,23,30,.96);
+  border:1px solid var(--gold-line);box-shadow:0 20px 46px rgba(0,0,0,.6);
+  opacity:0;transform:translateY(14px);pointer-events:none;transition:.22s
+}
+.toast.show{opacity:1;transform:none}
+
+@media(max-width:1080px){.main{grid-template-columns:272px 1fr}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="ambient"></div>
+<div class="grain"></div>
+
+<div class="app">
+  <header class="topbar glass">
+    <img class="logo" src="logo.png" alt="">
+    <div class="brand">
+      <strong>Riddle-FUVT</strong>
+      <span>Riddle FiveM Ultimate Vehicle Tool &nbsp;&middot;&nbsp; extract &amp; convert</span>
+    </div>
+    <div class="spacer"></div>
+    <nav class="tabs">
+      <button class="tab on" data-tab="extract">Extract</button>
+      <button class="tab" data-tab="build">Build add-ons</button>
+      <button class="tab" data-tab="merge">Merge</button>
+    </nav>
+    <div class="credit">
+      by <b style="color:var(--gold)">DanTheMan7777</b><br>
+      <a href="#" id="ghLink">github.com/DanRiddle</a>
+    </div>
+  </header>
+
+  <main class="main">
+    <aside class="sidebar glass">
+
+      <div class="side on" data-side="extract">
+        <div>
+          <p class="label">Vehicle resource folder</p>
+          <div id="path" class="pathbox">No folder selected.</div>
+          <button id="pick" class="btn gold" style="margin-top:9px">Select folder</button>
+          <div class="row2" style="margin-top:8px">
+            <button id="scan" class="btn">Scan</button>
+            <button id="clear" class="btn">Clear</button>
+          </div>
+        </div>
+
+        <div>
+          <p class="label">Default price</p>
+          <div class="inline">
+            <input id="defaultPrice" class="field" type="number" min="0" step="100" value="0">
+            <button id="applyPrice" class="btn" style="width:auto;padding:10px 14px">Apply</button>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><b id="sVehicles">0</b><span>vehicles</span></div>
+          <div class="stat"><b id="sMeta">0</b><span>meta files</span></div>
+          <div class="stat"><b id="sDupes">0</b><span>duplicates</span></div>
+          <div class="stat"><b id="sVisible">0</b><span>visible</span></div>
+        </div>
+
+        <div class="note">
+          <b>How the scan works</b><br>
+          Every folder under the selected path is walked once. A folder is only
+          parsed when it contains a <code>vehicles.meta</code>. Duplicate spawn
+          codes are dropped, keeping the first hit.<br><br>
+          Prices are not stored in <code>vehicles.meta</code>, so set a default
+          above or edit any row inline before exporting.
+        </div>
+      </div>
+
+      <div class="side" data-side="build">
+        <div>
+          <p class="label">Folder holding the dlc.rpf packs</p>
+          <div id="bPath" class="pathbox">No folder selected.</div>
+          <button id="bPick" class="btn gold" style="margin-top:9px">Select source folder</button>
+        </div>
+
+        <div>
+          <p class="label">Output folder</p>
+          <div id="bOut" class="pathbox">No folder selected.</div>
+          <button id="bPickOut" class="btn" style="margin-top:9px">Select output folder</button>
+        </div>
+
+        <div>
+          <p class="label">Resource name prefix</p>
+          <input id="bPrefix" class="field" placeholder="e.g. rc_" value="">
+        </div>
+
+        <div>
+          <p class="label">Spawn command</p>
+          <input id="bCmd" class="field" placeholder="/car" value="/car">
+        </div>
+
+        <div>
+          <p class="label">Conversion fixes</p>
+          <label class="opt"><input id="optIds" type="checkbox" checked>
+            <span>Give each pack unique siren IDs</span></label>
+          <label class="opt"><input id="optLabels" type="checkbox" checked>
+            <span>Add real display names</span></label>
+          <label class="opt"><input id="optHandling" type="checkbox">
+            <span>Generate handling when missing</span></label>
+          <label class="opt"><input id="optSheet" type="checkbox" checked>
+            <span>Write spawncode.md</span></label>
+        </div>
+
+        <div id="toolBox" style="display:none">
+          <p class="label">gtautil.exe <span style="text-transform:none;letter-spacing:0">(only for encrypted packs)</span></p>
+          <div class="inline">
+            <input id="bTool" class="field" placeholder="not found" readonly>
+            <button id="bToolPick" class="btn" style="width:auto;padding:10px 12px">...</button>
+          </div>
+          <button id="bToolGet" class="btn" style="margin-top:8px">Download gtautil</button>
+        </div>
+
+        <button id="bRun" class="btn gold">Build all</button>
+
+        <div class="stats">
+          <div class="stat"><b id="bFound">0</b><span>packs found</span></div>
+          <div class="stat"><b id="bNative">0</b><span>no tool needed</span></div>
+          <div class="stat"><b id="bKeys">0</b><span>need gtautil</span></div>
+          <div class="stat"><b id="bBuilt">0</b><span>built</span></div>
+        </div>
+
+        <div class="note">
+          <b>How unpacking works</b><br>
+          Archives written with an open table of contents are read
+          <b>natively</b> — no external tool, no GTA V install needed. Most
+          mod <code>dlc.rpf</code> files are built this way.<br><br>
+          Archives using <b>AES</b> or <b>NG</b> encryption hide their file list
+          behind keys stored in <code>GTA5.exe</code>. Those need
+          <b>gtautil</b>, which reads the keys from your own game install.<br><br>
+          Select a source folder and the counters above tell you which is which
+          before you start. gtautil only appears if a pack actually needs it.<br><br>
+          <b>Generated handling</b> uses class templates, not the original
+          author's tuning. Every one is flagged in the log.
+        </div>
+      </div>
+
+      <div class="side" data-side="merge">
+        <div>
+          <p class="label">Folder holding the packs to merge</p>
+          <div id="mPath" class="pathbox">No folder selected.</div>
+          <button id="mPick" class="btn gold" style="margin-top:9px">Select source folder</button>
+        </div>
+
+        <div>
+          <p class="label">Output folder</p>
+          <div id="mOut" class="pathbox">No folder selected.</div>
+          <button id="mPickOut" class="btn" style="margin-top:9px">Select output folder</button>
+        </div>
+
+        <div>
+          <p class="label">Merged resource name</p>
+          <input id="mName" class="field" placeholder="e.g. mega_police_pack" value="">
+        </div>
+
+        <div>
+          <p class="label">Spawn command</p>
+          <input id="mCmd" class="field" placeholder="/car" value="/car">
+        </div>
+
+        <div>
+          <p class="label">Options</p>
+          <label class="opt"><input id="mOptIds" type="checkbox" checked>
+            <span>Give each pack unique siren IDs</span></label>
+          <label class="opt"><input id="mOptLabels" type="checkbox" checked>
+            <span>Add real display names</span></label>
+          <label class="opt"><input id="mOptSheet" type="checkbox" checked>
+            <span>Write spawncode.md</span></label>
+        </div>
+
+        <button id="mRun" class="btn gold">Merge into one</button>
+
+        <div class="stats">
+          <div class="stat"><b id="mPacks">0</b><span>packs found</span></div>
+          <div class="stat"><b id="mVehicles">0</b><span>vehicles</span></div>
+          <div class="stat"><b id="mFiles">0</b><span>files copied</span></div>
+          <div class="stat"><b id="mLeft">0</b><span>left alone</span></div>
+          <div class="stat"><b id="mRenamed">0</b><span>renamed</span></div>
+        </div>
+
+        <div class="note">
+          <b>How merging works</b><br>
+          Every pack keeps its own folder under <code>stream/</code> and
+          <code>data/</code>, and its meta files are copied <b>byte for
+          byte</b>. FiveM accepts repeated <code>data_file</code> entries and
+          scans <code>stream/</code> recursively, so nothing has to be merged
+          at the XML level.<br><br>
+          That is what keeps a pack whose single
+          <code>vehicles.meta</code> holds a dozen cars intact — and it means a
+          car that misbehaves points straight at the download it came
+          from.<br><br>
+          <b>Escrow-protected resources are never merged.</b> Anything carrying a
+          <code>.fxap</code> only runs under its own resource name, so it is left
+          exactly where it is.<br><br>
+          <b>Duplicate spawn codes never stop the run.</b> The same car shipped
+          twice is kept once. A genuinely different build of the same spawn code
+          is renamed <code>name_1</code> ... <code>name_10</code>, with its model
+          files and metas renamed to match. Engine audio still binds to the
+          original name.
+        </div>
+      </div>
+    </aside>
+
+    <section class="panel glass">
+
+      <div class="view on" data-view="extract">
+        <div class="toolbar">
+          <input id="search" class="field" placeholder="Search spawn code, name, brand, class or resource...">
+          <select id="catFilter" class="field"><option value="">All classes</option></select>
+          <select id="fmt" class="field"></select>
+          <label class="inline muted" style="font-size:12px;gap:6px;white-space:nowrap">
+            <input id="onlyVisible" type="checkbox" checked> filtered only
+          </label>
+          <button id="export" class="btn gold" style="width:auto;padding:10px 18px">Export</button>
+        </div>
+        <div class="progress"><i id="scanBar"></i></div>
+        <div class="thead" id="thead">
+          <div data-sort="0">Spawn code</div>
+          <div data-sort="1">Name</div>
+          <div data-sort="2">Brand</div>
+          <div data-sort="3">Class</div>
+          <div data-sort="4">Type</div>
+          <div>Price</div>
+          <div data-sort="5">Resource</div>
+        </div>
+        <div class="scroller" id="scroller">
+          <div id="spacerTop"></div>
+          <div id="rows"></div>
+          <div id="spacerBot"></div>
+          <div class="empty" id="emptyExtract">
+            <div>
+              <img src="logo.png" alt="">
+              <h3>Nothing scanned yet</h3>
+              <p>Pick the folder that holds your vehicle resources, then hit Scan.
+                 Spawn codes and framework data land right here.</p>
+            </div>
+          </div>
+        </div>
+        <footer class="footer">
+          <span class="dot" id="dot"></span>
+          <div class="status" id="status">Ready.</div>
+          <div>Click a spawn code to copy it</div>
+        </footer>
+      </div>
+
+      <div class="view" data-view="build">
+        <div class="toolbar">
+          <div style="flex:1;font-size:13px" class="muted" id="bHeadline">
+            Batch converter &mdash; point it at a folder of vehicle packs and it builds one FiveM resource per pack. Open archives are unpacked natively.
+          </div>
+          <button id="bSheet" class="btn" style="width:auto;padding:10px 16px" disabled>Spawn codes</button>
+          <button id="bOpen" class="btn" style="width:auto;padding:10px 16px" disabled>Open output</button>
+        </div>
+        <div class="progress"><i id="buildBar"></i></div>
+        <div class="logwrap" id="buildLog">
+          <div class="empty">
+            <div>
+              <img src="logo.png" alt="">
+              <h3>No build run yet</h3>
+              <p>Select a source folder containing your pack folders, an output
+                 folder, then press Build all. Results appear here line by line.</p>
+            </div>
+          </div>
+        </div>
+        <footer class="footer">
+          <span class="dot" id="bDot"></span>
+          <div class="status" id="bStatus">Ready.</div>
+        </footer>
+      </div>
+
+      <div class="view" data-view="merge">
+        <div class="toolbar">
+          <div style="flex:1;font-size:13px" class="muted">
+            Combine a folder of vehicle packs into one FiveM resource. Each pack keeps its own subfolder and its meta files are never rewritten.
+          </div>
+          <button id="mSheet" class="btn" style="width:auto;padding:10px 16px" disabled>Spawn codes</button>
+          <button id="mOpen" class="btn" style="width:auto;padding:10px 16px" disabled>Open output</button>
+        </div>
+        <div class="progress"><i id="mergeBar"></i></div>
+        <div class="logwrap" id="mergeLog">
+          <div class="empty">
+            <div>
+              <img src="logo.png" alt="">
+              <h3>Nothing merged yet</h3>
+              <p>Select a folder holding your vehicle packs, an output folder,
+                 then press Merge into one. Every vehicle found lands in a
+                 single resource.</p>
+            </div>
+          </div>
+        </div>
+        <footer class="footer">
+          <span class="dot" id="mDot"></span>
+          <div class="status" id="mStatus">Ready.</div>
+        </footer>
+      </div>
+
+    </section>
+  </main>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const ROW_H = 46;
+
+let all = [];          // every scanned vehicle
+let view = [];         // current filtered + sorted slice
+let sortCol = 0, sortDir = 1;
+let building = false;
+let merging = false;
+let outFolder = "", srcFolder = "", scanFolder = "", spawnIndex = "";
+let mSrcFolder = "", mOutFolder = "", mergeSheet = "", mergePath = "";
+
+function esc(s){
+  return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+let toastTimer;
+function toast(msg){
+  const el = $("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 3600);
+}
+function debounce(fn, ms){
+  let t;
+  return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+}
+
+document.querySelectorAll(".tab").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".tab").forEach(b => b.classList.toggle("on", b === btn));
+    const name = btn.dataset.tab;
+    document.querySelectorAll(".view").forEach(v => v.classList.toggle("on", v.dataset.view === name));
+    document.querySelectorAll(".side").forEach(v => v.classList.toggle("on", v.dataset.side === name));
+  };
+});
+
+function applyFilter(){
+  const q = $("search").value.trim().toLowerCase();
+  const cat = $("catFilter").value;
+  view = all;
+  if (cat) view = view.filter(v => v.category === cat);
+  if (q){
+    const terms = q.split(/\s+/);
+    view = view.filter(v => terms.every(t => v.hay.includes(t)));
+  }
+  view = view.slice().sort((a, b) => {
+    const A = a.cols[sortCol], B = b.cols[sortCol];
+    return A < B ? -sortDir : A > B ? sortDir : 0;
+  });
+  $("sVisible").textContent = view.length;
+  $("scroller").scrollTop = 0;
+  paint();
+}
+const applyFilterDebounced = debounce(applyFilter, 130);
+
+function paint(){
+  const sc = $("scroller");
+  const empty = $("emptyExtract");
+  if (!view.length){
+    $("spacerTop").style.height = $("spacerBot").style.height = "0px";
+    $("rows").innerHTML = "";
+    empty.style.display = "grid";
+    empty.querySelector("h3").textContent = all.length ? "No match" : "Nothing scanned yet";
+    empty.querySelector("p").textContent = all.length
+      ? "No vehicle matches the current search or class filter."
+      : "Pick the folder that holds your vehicle resources, then hit Scan. Spawn codes and framework data land right here.";
+    return;
+  }
+  empty.style.display = "none";
+
+  const start = Math.max(0, Math.floor(sc.scrollTop / ROW_H) - 6);
+  const count = Math.ceil(sc.clientHeight / ROW_H) + 12;
+  const end = Math.min(view.length, start + count);
+
+  $("spacerTop").style.height = (start * ROW_H) + "px";
+  $("spacerBot").style.height = ((view.length - end) * ROW_H) + "px";
+
+  let html = "";
+  for (let i = start; i < end; i++){
+    const v = view[i];
+    html += '<div class="trow">'
+      + '<div><span class="code" data-copy="' + esc(v.model) + '">' + esc(v.model) + '</span></div>'
+      + '<div>' + esc(v.name) + '</div>'
+      + '<div class="muted">' + esc(v.brand) + '</div>'
+      + '<div><span class="chip">' + esc(v.category) + '</span></div>'
+      + '<div class="muted">' + esc(v.type) + '</div>'
+      + '<div><input class="priceInput" type="number" min="0" value="' + Number(v.price || 0) + '" data-model="' + esc(v.model) + '"></div>'
+      + '<div class="muted" title="' + esc(v.source) + '">' + esc(v.resource) + '</div>'
+      + '</div>';
+  }
+  $("rows").innerHTML = html;
+}
+
+let painting = false;
+$("scroller").addEventListener("scroll", () => {
+  if (painting) return;
+  painting = true;
+  requestAnimationFrame(() => { painting = false; paint(); });
+}, {passive:true});
+window.addEventListener("resize", debounce(paint, 100));
+
+$("rows").addEventListener("click", e => {
+  const code = e.target.closest("[data-copy]");
+  if (!code) return;
+  navigator.clipboard.writeText(code.dataset.copy).then(
+    () => toast("Copied " + code.dataset.copy),
+    () => toast("Clipboard blocked by the system.")
+  );
+});
+
+const pushPrice = debounce((model, price) => {
+  window.pywebview.api.set_price(model, price);
+}, 350);
+
+$("rows").addEventListener("input", e => {
+  const input = e.target.closest(".priceInput");
+  if (!input) return;
+  const model = input.dataset.model;
+  const price = parseInt(input.value, 10) || 0;
+  const hit = all.find(v => v.model === model);
+  if (hit) hit.price = price;
+  pushPrice(model, price);
+});
+
+$("thead").addEventListener("click", e => {
+  const head = e.target.closest("[data-sort]");
+  if (!head) return;
+  const col = Number(head.dataset.sort);
+  sortDir = (col === sortCol) ? -sortDir : 1;
+  sortCol = col;
+  document.querySelectorAll(".thead div").forEach(d => d.classList.toggle("sorted", d === head));
+  applyFilter();
+});
+
+$("search").addEventListener("input", applyFilterDebounced);
+$("catFilter").addEventListener("change", applyFilter);
+
+$("pick").onclick = async () => {
+  const folder = await window.pywebview.api.choose_folder();
+  if (!folder) return;
+  scanFolder = folder;
+  $("path").textContent = folder;
+  $("status").textContent = "Folder selected. Press Scan.";
+};
+
+$("scan").onclick = async () => {
+  if (!scanFolder) return toast("Select a folder first.");
+  const res = await window.pywebview.api.scan(scanFolder, parseInt($("defaultPrice").value, 10) || 0);
+  if (!res.ok) toast(res.error);
+};
+
+$("clear").onclick = () => {
+  all = []; view = [];
+  ["sVehicles","sMeta","sDupes","sVisible"].forEach(id => $(id).textContent = "0");
+  $("path").textContent = "No folder selected.";
+  $("catFilter").innerHTML = '<option value="">All classes</option>';
+  $("search").value = "";
+  scanFolder = "";
+  $("dot").className = "dot";
+  $("status").textContent = "Ready.";
+  $("scanBar").style.width = "0";
+  paint();
+};
+
+$("applyPrice").onclick = async () => {
+  const price = parseInt($("defaultPrice").value, 10) || 0;
+  if (!all.length) return toast("Scan a folder first.");
+  await window.pywebview.api.set_all_prices(price);
+  all.forEach(v => v.price = price);
+  paint();
+  toast("Price set to " + price + " on " + all.length + " vehicle(s).");
+};
+
+$("export").onclick = async () => {
+  if (!all.length) return toast("Nothing to export. Scan a folder first.");
+  const models = $("onlyVisible").checked ? view.map(v => v.model) : null;
+  const res = await window.pywebview.api.export($("fmt").value, models);
+  if (res.ok) toast("Exported " + res.count + " vehicle(s) to " + res.path);
+  else if (!res.cancelled) toast(res.error);
+};
+
+$("bPick").onclick = async () => {
+  const folder = await window.pywebview.api.choose_folder();
+  if (!folder) return;
+  srcFolder = folder;
+  $("bPath").textContent = folder;
+  const preview = await window.pywebview.api.preview_build(folder);
+  if (!preview.ok) return toast(preview.error);
+
+  $("bFound").textContent = preview.total;
+  $("bNative").textContent = preview.native + preview.loose;
+  $("bKeys").textContent = preview.needs_keys;
+  $("toolBox").style.display = preview.needs_keys ? "block" : "none";
+
+  const arc = preview.archives || {total:0, supported:0, unsupported:[]};
+  const arcNote = arc.total
+    ? "  +  " + arc.supported + " of " + arc.total + " archive(s) will be unpacked"
+    : "";
+
+  if (!preview.total && !arc.supported){
+    $("bStatus").textContent = arc.total
+      ? "Archives found, but none can be opened - see the log."
+      : "No .rpf archive found in that folder.";
+    $("buildLog").innerHTML = "";
+    (arc.unsupported || []).forEach(u => logLine("bad", "archive", u));
+    return;
+  }
+  $("bStatus").textContent = (preview.needs_keys
+    ? preview.total + " pack(s) found - " + preview.needs_keys + " need gtautil, the rest unpack natively."
+    : preview.total + " pack(s) found - all unpack natively, no external tool needed.") + arcNote;
+
+  $("buildLog").innerHTML = "";
+  preview.details.forEach(d => logLine(d.mode.indexOf("needs") === 0 ? "bad" : "ok", d.name, d.mode));
+  if (arc.supported)
+    logLine("", "archives", arc.supported + " archive(s) will be unpacked to a temp folder during the build");
+  (arc.unsupported || []).forEach(u => logLine("bad", "archive", u));
+};
+
+$("bPickOut").onclick = async () => {
+  const folder = await window.pywebview.api.choose_folder();
+  if (!folder) return;
+  outFolder = folder;
+  $("bOut").textContent = folder;
+};
+
+$("bToolPick").onclick = async () => {
+  const file = await window.pywebview.api.choose_file();
+  if (!file) return;
+  const res = await window.pywebview.api.locate_gtautil(file);
+  $("bTool").value = res.path || "";
+  $("bTool").placeholder = res.path ? "" : "not found";
+  toast(res.ok ? "gtautil linked." : "That file was not accepted as gtautil.exe.");
+};
+
+$("bRun").onclick = async () => {
+  if (building) return toast("A build is already running.");
+  if (!srcFolder || !outFolder) return toast("Select a source and an output folder.");
+  const res = await window.pywebview.api.build(srcFolder, outFolder, $("bPrefix").value.trim(), {
+    fix_ids:            $("optIds").checked,
+    add_labels:         $("optLabels").checked,
+    generate_handling:  $("optHandling").checked,
+    spawn_sheet:        $("optSheet").checked,
+    spawn_command:      $("bCmd").value.trim() || "/car"
+  });
+  if (!res.ok) toast(res.error);
+};
+
+$("bToolGet").onclick = async () => {
+  $("bToolGet").disabled = true;
+  $("bToolGet").textContent = "Downloading...";
+  const res = await window.pywebview.api.get_gtautil();
+  $("bToolGet").disabled = false;
+  $("bToolGet").textContent = "Download gtautil";
+  if (res.ok){
+    $("bTool").value = res.path;
+    toast("gtautil " + (res.version || "") + " installed.");
+  } else {
+    toast(res.error);
+    if (res.page) window.pywebview.api.open_path(res.page);
+  }
+};
+
+$("bSheet").onclick = () => spawnIndex && window.pywebview.api.open_path(spawnIndex);
+$("bOpen").onclick = () => window.pywebview.api.open_path(outFolder);
+
+$("mPick").onclick = async () => {
+  const folder = await window.pywebview.api.choose_folder("");
+  if (!folder) return;
+  mSrcFolder = folder;
+  $("mPath").textContent = folder;
+  if (!$("mName").value.trim()){
+    const leaf = folder.replace(/[\\/]+$/, "").split(/[\\/]/).pop() || "merged";
+    $("mName").value = leaf.toLowerCase().replace(/[^a-z0-9_-]+/g, "_") + "_merged";
+  }
+};
+
+$("mPickOut").onclick = async () => {
+  const folder = await window.pywebview.api.choose_folder("");
+  if (!folder) return;
+  mOutFolder = folder;
+  $("mOut").textContent = folder;
+};
+
+$("mRun").onclick = async () => {
+  if (merging) return toast("A merge is already running.");
+  if (!mSrcFolder || !mOutFolder) return toast("Select a source and an output folder.");
+  const res = await window.pywebview.api.merge(mSrcFolder, mOutFolder, $("mName").value.trim(), {
+    fix_ids:         $("mOptIds").checked,
+    add_labels:      $("mOptLabels").checked,
+    spawn_sheet:     $("mOptSheet").checked,
+    spawn_command:   $("mCmd").value.trim() || "/car"
+  });
+  if (!res.ok) toast(res.error);
+};
+
+$("mSheet").onclick = () => mergeSheet && window.pywebview.api.open_path(mergeSheet);
+$("mOpen").onclick = () => mergePath && window.pywebview.api.open_path(mergePath);
+$("ghLink").onclick = e => { e.preventDefault(); window.pywebview.api.open_path("https://github.com/DanRiddle"); };
+
+function logTo(wrapId, cls, key, value){
+  const wrap = $(wrapId);
+  if (wrap.querySelector(".empty")) wrap.innerHTML = "";
+  const div = document.createElement("div");
+  div.className = "logline " + cls;
+  div.innerHTML = '<span class="k">' + esc(key) + '</span><span class="v">' + esc(value) + '</span>';
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+function logLine(cls, key, value){ logTo("buildLog", cls, key, value); }
+function mLog(cls, key, value){ logTo("mergeLog", cls, key, value); }
+
+window.onPy = function(event, data){
+  switch(event){
+
+    case "scan:start":
+      $("dot").className = "dot warn";
+      $("status").textContent = "Scanning " + data.folder;
+      $("scanBar").style.width = "2%";
+      break;
+
+    case "scan:progress":{
+      const pct = data.total ? Math.round(data.done / data.total * 100) : 0;
+      $("scanBar").style.width = pct + "%";
+      $("status").textContent = "Parsing " + data.done + " / " + data.total + "  -  " + data.label;
+      break;
+    }
+
+    case "scan:done":{
+      const price = parseInt($("defaultPrice").value, 10) || 0;
+      all = data.rows.map(r => ({
+        model:r[0], name:r[1], brand:r[2], category:r[3], type:r[4], resource:r[5], source:r[6],
+        price:price,
+        cols:[r[0].toLowerCase(), r[1].toLowerCase(), r[2].toLowerCase(), r[3].toLowerCase(), r[4].toLowerCase(), r[5].toLowerCase()],
+        hay:(r[0]+" "+r[1]+" "+r[2]+" "+r[3]+" "+r[4]+" "+r[5]).toLowerCase()
+      }));
+      const cats = [...new Set(all.map(v => v.category))].sort();
+      $("catFilter").innerHTML = '<option value="">All classes</option>'
+        + cats.map(c => '<option value="' + esc(c) + '">' + esc(c) + '</option>').join("");
+      $("sVehicles").textContent = all.length;
+      $("sMeta").textContent = data.meta_count;
+      $("sDupes").textContent = data.duplicates_removed;
+      $("scanBar").style.width = "100%";
+      setTimeout(() => $("scanBar").style.width = "0", 700);
+      $("dot").className = "dot ok";
+      $("status").textContent = "Found " + all.length + " vehicle(s) in " + data.meta_count + " meta file(s)"
+        + (data.unreadable ? "  -  " + data.unreadable + " file(s) unreadable" : "") + ".";
+      applyFilter();
+      break;
+    }
+
+    case "scan:error":
+      $("dot").className = "dot";
+      $("status").textContent = "Scan failed.";
+      $("scanBar").style.width = "0";
+      toast(data.error);
+      break;
+
+    case "build:start":
+      building = true;
+      $("bRun").disabled = true;
+      $("bDot").className = "dot warn";
+      $("buildLog").innerHTML = "";
+      logLine("", "gtautil", data.gtautil || "not configured - AES/NG archives will be skipped");
+      break;
+
+    case "build:progress":{
+      const pct = data.total ? Math.round(data.done / data.total * 100) : 0;
+      $("buildBar").style.width = pct + "%";
+      $("bStatus").textContent = data.done + " / " + data.total + "  -  " + data.label;
+      break;
+    }
+
+    case "build:done":{
+      building = false;
+      $("bRun").disabled = false;
+      data.results.forEach(r => {
+        if (r.ok) logLine("ok", r.resource, r.stream + " stream, " + r.data + " data, " + r.audio + " audio"
+          + (r.models && r.models.length ? "  |  " + r.models.join(", ") : "")
+          + ((r.log || []).length ? "  |  " + r.log[0] : ""));
+        else logLine("bad", r.resource, r.error);
+        (r.warnings || []).forEach(w => logLine("warn", "", w));
+      });
+      (data.archive_notes || []).forEach(n => logLine("warn", "archive", n));
+      const astat = data.archives || {};
+      if (astat.archives)
+        logLine("", "archives", astat.unpacked + " of " + astat.archives + " unpacked, "
+          + astat.packs + " pack(s) found inside"
+          + (astat.failed ? ", " + astat.failed + " could not be opened" : ""));
+      $("bBuilt").textContent = data.built;
+      $("bDot").className = data.failed ? "dot warn" : "dot ok";
+      if (data.spawn_index)
+        logLine("ok", "spawn codes", "spawncodes.md written for the whole batch");
+      (data.duplicate_models || []).forEach(d =>
+        logLine("bad", "duplicate code", d + "  -  only one of these will load"));
+      if ((data.reassigned_ids || []).length)
+        logLine("", "id fixes", data.reassigned_ids.length + " siren id(s) renumbered to avoid clashes");
+      $("bStatus").textContent = data.built + " built, " + data.failed + " failed, "
+        + (data.warnings || 0) + " warning(s)  ->  " + data.out_root;
+      $("bOpen").disabled = false;
+      spawnIndex = data.spawn_index || "";
+      $("bSheet").disabled = !spawnIndex;
+      $("buildBar").style.width = "0";
+      toast("Build finished: " + data.built + " ok, " + data.failed + " failed.");
+      break;
+    }
+
+    case "build:error":
+      building = false;
+      $("bRun").disabled = false;
+      $("bDot").className = "dot";
+      $("bStatus").textContent = "Build failed.";
+      $("buildBar").style.width = "0";
+      toast(data.error);
+      break;
+
+    case "merge:start":
+      merging = true;
+      $("mRun").disabled = true;
+      $("mDot").className = "dot warn";
+      $("mergeLog").innerHTML = "";
+      $("mSheet").disabled = true;
+      $("mOpen").disabled = true;
+      mLog("", "gtautil", data.gtautil || "not configured - AES/NG archives will be skipped");
+      break;
+
+    case "merge:progress":{
+      const pct = data.total ? Math.round(data.done / data.total * 100) : 0;
+      $("mergeBar").style.width = pct + "%";
+      $("mStatus").textContent = data.label + "  -  " + data.done + " / " + data.total;
+      break;
+    }
+
+    case "merge:done":{
+      merging = false;
+      $("mRun").disabled = false;
+      $("mergeBar").style.width = "100%";
+
+      if (!data.ok){
+        $("mDot").className = "dot bad";
+        (data.left_alone || []).forEach(a =>
+          mLog("warn", "left alone", a.name + "  -  " + a.reason));
+        (data.warnings || []).forEach(w => mLog("warn", "", w));
+        mLog("bad", "stopped", data.error);
+        $("mStatus").textContent = "Merge stopped - nothing was written.";
+        $("mPacks").textContent = data.packs || 0;
+        $("mVehicles").textContent = data.vehicles || 0;
+        break;
+      }
+
+      mergePath = data.path;
+      mergeSheet = data.spawn_sheet || "";
+      if (data.mode === "resources")
+        mLog("", "mode", "already-built resources - layouts and manifests preserved, "
+          + "nothing rebuilt" + (data.scripts ? "; " + data.scripts + " script(s) carried over" : ""));
+      (data.sources || []).forEach(s =>
+        mLog("ok", s.sub, s.vehicles + " vehicle(s)"
+          + (s.referenced ? "  |  " + s.referenced + " meta entry(s) with no model shipped" : "")));
+      (data.renames || []).forEach(x =>
+        mLog("warn", "renamed", x.from + "  ->  " + x.to + "   (" + x.pack
+          + ", different build of the same spawn code)"));
+      (data.left_alone || []).forEach(a =>
+        mLog(a.escrow ? "bad" : "warn", a.escrow ? "protected" : "left alone",
+          a.name + "  -  " + a.reason));
+      if (data.skipped_files)
+        mLog("", "skipped", data.skipped_files + " non-game file(s) not copied "
+          + "(livery templates, .psd/.dds sources, readmes)");
+      if (data.escrowed)
+        mLog("bad", "escrow", data.escrowed + " resource(s) are Cfx escrow-protected and "
+          + "cannot be merged. Keep running them as they are.");
+      if ((data.left_alone || []).length)
+        mLog("", "not merged", data.left_alone.length + " resource(s) were left where they are "
+          + "(wheels, EUP, MLOs, maps, audio). Keep running them alongside the merged pack.");
+      (data.archive_notes || []).forEach(n => mLog("warn", "archive", n));
+      (data.warnings || []).forEach(w => mLog("warn", "", w));
+      if ((data.reassigned_ids || []).length)
+        mLog("", "id fixes", data.reassigned_ids.length + " siren id(s) renumbered to avoid clashes");
+      mLog("ok", data.resource, data.stream + " stream, " + data.data + " data, "
+        + data.audio + " audio  |  " + data.vehicles + " vehicle(s) from " + data.packs + " pack(s)");
+
+      $("mPacks").textContent = data.packs;
+      $("mVehicles").textContent = data.vehicles;
+      $("mFiles").textContent = data.stream + data.data + data.audio;
+      $("mLeft").textContent = (data.left_alone || []).length;
+      $("mRenamed").textContent = (data.renames || []).length;
+      $("mDot").className = (data.warnings || []).length ? "dot warn" : "dot ok";
+      $("mStatus").textContent = data.vehicles + " vehicle(s) merged into " + data.resource;
+      $("mSheet").disabled = !mergeSheet;
+      $("mOpen").disabled = false;
+      break;
+    }
+
+    case "merge:error":
+      merging = false;
+      $("mRun").disabled = false;
+      $("mDot").className = "dot";
+      $("mStatus").textContent = "Merge failed.";
+      $("mergeBar").style.width = "0";
+      toast(data.error);
+      break;
+  }
+};
+
+const bootStart = performance.now();
+window.addEventListener("pywebviewready", async () => {
+  const ready = performance.now();
+  const info = await window.pywebview.api.app_info();
+  const bridged = performance.now();
+  $("fmt").innerHTML = info.formats
+    .map(f => '<option value="' + esc(f.id) + '">' + esc(f.label) + '</option>').join("");
+  $("bTool").value = info.gtautil || "";
+  $("bTool").placeholder = info.gtautil ? "" : "not found - browse for gtautil.exe";
+  if (info.settings && info.settings.last_folder){
+    scanFolder = info.settings.last_folder;
+    $("path").textContent = scanFolder;
+    $("status").textContent = "Last folder restored. Press Scan.";
+  }
+
+  console.log(`[boot] paint ${Math.round(ready - bootStart)}ms, ` +
+              `bridge ${Math.round(bridged - ready)}ms`);
+  $("status").title = `paint ${Math.round(ready - bootStart)}ms / ` +
+                      `bridge ${Math.round(bridged - ready)}ms`;
+});
+</script>
+</body>
+</html>
