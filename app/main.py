@@ -16,6 +16,34 @@ import webview
 
 import riddle_core as core
 
+
+def _patch_pywebview_js_glob() -> None:
+    # pywebview finds its own bridge scripts with glob(), and glob reads [ ] in
+    # a path as a wildcard. Installed under a folder like D:\[Fivem-Store]\...,
+    # it finds none of its scripts, injects an empty bridge, window.pywebview
+    # never exists, and every button in the UI silently does nothing.
+    # Escape the folder part before pywebview globs it.
+    try:
+        import glob as _glob
+        import webview.util as _wvu
+        js_dir = _wvu.get_js_dir()
+    except Exception:
+        return
+    if not any(ch in js_dir for ch in "[]*?"):
+        return
+
+    original = _glob.glob
+
+    def safe_glob(pattern, *args, **kwargs):
+        if isinstance(pattern, str) and pattern.startswith(js_dir):
+            pattern = _glob.escape(js_dir) + pattern[len(js_dir):]
+        return original(pattern, *args, **kwargs)
+
+    _wvu.glob = safe_glob
+
+
+_patch_pywebview_js_glob()
+
 if getattr(sys, "frozen", False):
     ROOT = Path(sys.executable).resolve().parent
 else:
